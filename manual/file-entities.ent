@@ -1,0 +1,5 @@
+<!ENTITY reference.tar.reference SYSTEM './tar/reference.xml'>
+<!ENTITY reference.tar.constants SYSTEM './tar/constants.xml'>
+<!ENTITY reference.tar.ini SYSTEM './tar/ini.xml'>
+<!ENTITY reference.tar.configure SYSTEM './tar/configure.xml'>
+<!ENTITY reference.tar.functions SYSTEM './functions.xml'>

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE package SYSTEM "http://pear.php.net/dtd/package-1.0">
+<package>
+
+  <name>tar</name>
+  <summary>PSR </summary>
+  <description>
+This extension allows extracting tar archives.
+  </description>
+
+  <license>PHP</license>
+
+  <maintainers>
+    <maintainer>
+      <user>realityking</user>
+      <name>Rouven Weßling</name>
+      <email>me@rouvenwessling.de</email>
+      <role>lead</role>
+    </maintainer>
+  </maintainers>
+
+  <release>
+    <version>0.0.1dev</version>
+    <state>devel</state>
+    <notes>unknown</notes>
+    <date>2013-03-30</date>
+  </release>
+  <changelog>
+
+  </changelog>
+  <deps>
+    <dep type="php" rel="ge" version="5.0.0"/>
+  </deps>
+
+  <filelist>
+    <dir name="/">
+      <file role='doc' name='EXPERIMENTAL'/>
+      <file role='doc' name='CREDITS'/>
+      <file role='src' name='config.m4'/>
+      <file role='src' name='tar.dsp'/>
+      <file role='src' name='config.w32'/>
+      <file role='src' name='tar.c'/>
+      <file role='src' name='php_tar.h'/>
+      <dir name="tests">
+        <file role='test' name='TarArchive__open.phpt'/>
+        <file role='test' name='TarArchive__extractTo.phpt'/>
+        <file role='test' name='TarArchive__close.phpt'/>
+      </dir>
+    </dir>
+  </filelist>
+</package>

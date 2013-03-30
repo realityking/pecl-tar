@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension SYSTEM "../extension.dtd">
+<extension name="tar" version="0.1.0">
+	<summary>PSR </summary>
+	<description>This extension allows extracting tar archives.</description>
+	<maintainers>
+		<maintainer>
+			<user>realityking</user>
+			<name>Rouven Weßling</name>
+			<email>me@rouvenwessling.de</email>
+			<role>lead</role>
+		</maintainer>
+	</maintainers>
+	<license>PHP</license>
+
+	<class name="TarArchive">
+		<function name="open">
+			<proto>void open(string filename)</proto>
+		</function>
+		<function name="extractTo">
+			<proto>void extractTo(string destination)</proto>
+		</function>
+		<function name="close">
+			<proto>void close(void)</proto>
+		</function>
+	</class>
+</extension>

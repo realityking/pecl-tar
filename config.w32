@@ -1,0 +1,8 @@
+// $ Id: $
+// vim:ft=javascript
+
+ARG_ENABLE('tar' , 'PSR ', 'no');
+if (PHP_TAR == "yes") {
+  EXTENSION("tar", "tar.c");
+  AC_DEFINE("HAVE_TAR", 1, "tar support");
+}
