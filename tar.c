@@ -209,8 +209,6 @@ PHP_METHOD(TarArchive, statIndex)
 		i++;
 	}
 
-	/* RETURN_STRING(intern->th_buf.name, 1); */
-
 	array_init(return_value);
 	add_assoc_string(return_value, "name", th_get_pathname(intern), 1);
 	add_assoc_long(return_value, "crc", (long)th_get_crc(intern));
