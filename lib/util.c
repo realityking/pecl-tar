@@ -17,7 +17,7 @@
 #include <errno.h>
 #include <libgen.h>
 
-#ifdef HAVE_STRING_H
+#ifdef STDC_HEADERS
 # include <string.h>
 #endif
 
@@ -123,6 +123,21 @@ th_crc_calc(TAR *t)
 		sum += ((unsigned char *)(&(t->th_buf)))[i];
 	for (i = 0; i < 8; i++)
 		sum += (' ' - (unsigned char)t->th_buf.chksum[i]);
+
+	return sum;
+}
+
+
+/* calculate a signed header checksum */
+int
+th_signed_crc_calc(TAR *t)
+{
+	int i, sum = 0;
+
+	for (i = 0; i < T_BLOCKSIZE; i++)
+		sum += ((signed char *)(&(t->th_buf)))[i];
+	for (i = 0; i < 8; i++)
+		sum += (' ' - (signed char)t->th_buf.chksum[i]);
 
 	return sum;
 }

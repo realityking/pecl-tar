@@ -330,7 +330,7 @@ PHP_MINFO_FUNCTION(tar)
 	php_info_print_table_row(2, "Version", PHP_TAR_VERSION " (devel)");
 	php_info_print_table_row(2, "Released", "2013-03-30");
 	php_info_print_table_row(2, "Authors", "Rouven Weßling 'me@rouvenwessling.de' (lead)\n");
-	php_info_print_table_row(2, "Libzip version", "1.2.11");
+	php_info_print_table_row(2, "Libzip version", LIBTAR_VERSION);
 	php_info_print_table_end();
 	/* add your stuff here */
 

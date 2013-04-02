@@ -17,11 +17,8 @@
 #include <grp.h>
 #include <sys/types.h>
 
-#ifdef HAVE_STRING_H
+#ifdef STDC_HEADERS
 # include <string.h>
-#endif
-
-#ifdef HAVE_STDLIB_H
 # include <stdlib.h>
 #endif
 
@@ -30,21 +27,23 @@
 void
 th_finish(TAR *t)
 {
-	int i, sum = 0;
-
 	if (t->options & TAR_GNU)
-		strncpy(t->th_buf.magic, "ustar  ", 8);
+	{
+		/* we're aiming for this result, but must do it in
+		 * two calls to avoid FORTIFY segfaults on some Linux
+		 * systems:
+		 *      strncpy(t->th_buf.magic, "ustar  ", 8);
+		 */
+		strncpy(t->th_buf.magic, "ustar ", 6);
+		strncpy(t->th_buf.version, " ", 2);
+	}
 	else
 	{
 		strncpy(t->th_buf.version, TVERSION, TVERSLEN);
 		strncpy(t->th_buf.magic, TMAGIC, TMAGLEN);
 	}
 
-	for (i = 0; i < T_BLOCKSIZE; i++)
-		sum += ((char *)(&(t->th_buf)))[i];
-	for (i = 0; i < 8; i++)
-		sum += (' ' - t->th_buf.chksum[i]);
-	int_to_oct(sum, t->th_buf.chksum, 8);
+	int_to_oct(th_crc_calc(t), t->th_buf.chksum, 8);
 }
 
 
@@ -69,7 +68,7 @@ th_set_type(TAR *t, mode_t mode)
 
 /* encode file path */
 void
-th_set_path(TAR *t, char *pathname)
+th_set_path(TAR *t, const char *pathname)
 {
 	char suffix[2] = "";
 	char *tmp;
@@ -85,7 +84,7 @@ th_set_path(TAR *t, char *pathname)
 	if (pathname[strlen(pathname) - 1] != '/' && TH_ISDIR(t))
 		strcpy(suffix, "/");
 
-	if (strlen(pathname) > T_NAMELEN && (t->options & TAR_GNU))
+	if (strlen(pathname) > T_NAMELEN-1 && (t->options & TAR_GNU))
 	{
 		/* GNU-style long name */
 		t->th_buf.gnu_longname = strdup(pathname);
@@ -117,13 +116,13 @@ th_set_path(TAR *t, char *pathname)
 
 /* encode link path */
 void
-th_set_link(TAR *t, char *linkname)
+th_set_link(TAR *t, const char *linkname)
 {
 #ifdef DEBUG
 	printf("==> th_set_link(th, linkname=\"%s\")\n", linkname);
 #endif
 
-	if (strlen(linkname) > T_NAMELEN && (t->options & TAR_GNU))
+	if (strlen(linkname) > T_NAMELEN-1 && (t->options & TAR_GNU))
 	{
 		/* GNU longlink format */
 		t->th_buf.gnu_longlink = strdup(linkname);

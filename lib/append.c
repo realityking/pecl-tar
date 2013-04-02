@@ -18,12 +18,9 @@
 #include <sys/param.h>
 #include <sys/types.h>
 
-#ifdef HAVE_STRING_H
-# include <string.h>
-#endif
-
-#ifdef HAVE_STDLIB_H
+#ifdef STDC_HEADERS
 # include <stdlib.h>
+# include <string.h>
 #endif
 
 #ifdef HAVE_UNISTD_H
@@ -57,7 +54,7 @@ tar_dev_free(tar_dev_t *tdp)
 
 /* appends a file to the tar archive */
 int
-tar_append_file(TAR *t, char *realname, char *savename)
+tar_append_file(TAR *t, const char *realname, const char *savename)
 {
 	struct stat s;
 	int i;
@@ -211,7 +208,7 @@ tar_append_eof(TAR *t)
 
 /* add file contents to a tarchive */
 int
-tar_append_regfile(TAR *t, char *realname)
+tar_append_regfile(TAR *t, const char *realname)
 {
 	char block[T_BLOCKSIZE];
 	int filefd;

@@ -20,18 +20,18 @@
 # include <unistd.h>
 #endif
 
-#ifdef HAVE_STDLIB_H
+#ifdef STDC_HEADERS
 # include <stdlib.h>
 #endif
 
 
-const char libtar_version[] = "1.2.11";
+const char libtar_version[] = LIBTAR_VERSION;
 
 static tartype_t default_type = { open, close, read, write };
 
 
 static int
-tar_init(TAR **t, char *pathname, tartype_t *type,
+tar_init(TAR **t, const char *pathname, tartype_t *type,
 	 int oflags, int mode, int options)
 {
 	if ((oflags & O_ACCMODE) == O_RDWR)
@@ -66,7 +66,7 @@ tar_init(TAR **t, char *pathname, tartype_t *type,
 
 /* open a new tarfile handle */
 int
-tar_open(TAR **t, char *pathname, tartype_t *type,
+tar_open(TAR **t, const char *pathname, tartype_t *type,
 	 int oflags, int mode, int options)
 {
 	if (tar_init(t, pathname, type, oflags, mode, options) == -1)
@@ -91,7 +91,7 @@ tar_open(TAR **t, char *pathname, tartype_t *type,
 
 
 int
-tar_fdopen(TAR **t, int fd, char *pathname, tartype_t *type,
+tar_fdopen(TAR **t, int fd, const char *pathname, tartype_t *type,
 	   int oflags, int mode, int options)
 {
 	if (tar_init(t, pathname, type, oflags, mode, options) == -1)

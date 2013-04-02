@@ -17,7 +17,7 @@
 #include <pwd.h>
 #include <grp.h>
 
-#ifdef HAVE_STRING_H
+#ifdef STDC_HEADERS
 # include <string.h>
 #endif
 
@@ -26,7 +26,7 @@
 char *
 th_get_pathname(TAR *t)
 {
-	char filename[MAXPATHLEN];
+	static TLS_THREAD char filename[MAXPATHLEN];
 
 	if (t->th_buf.gnu_longname)
 		return t->th_buf.gnu_longname;
@@ -35,11 +35,11 @@ th_get_pathname(TAR *t)
 	{
 		snprintf(filename, sizeof(filename), "%.155s/%.100s",
 			 t->th_buf.prefix, t->th_buf.name);
-		return strdup(filename);
+		return filename;
 	}
 
 	snprintf(filename, sizeof(filename), "%.100s", t->th_buf.name);
-	return strdup(filename);
+	return filename;
 }
 
 

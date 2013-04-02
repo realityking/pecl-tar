@@ -17,7 +17,7 @@
 #include <dirent.h>
 #include <errno.h>
 
-#ifdef HAVE_STRING_H
+#ifdef STDC_HEADERS
 # include <string.h>
 #endif
 
@@ -47,7 +47,7 @@ tar_extract_glob(TAR *t, char *globname, char *prefix)
 			snprintf(buf, sizeof(buf), "%s/%s", prefix, filename);
 		else
 			strlcpy(buf, filename, sizeof(buf));
-		if (tar_extract_file(t, filename) != 0)
+		if (tar_extract_file(t, buf) != 0)
 			return -1;
 	}
 

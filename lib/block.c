@@ -14,11 +14,8 @@
 
 #include <errno.h>
 
-#ifdef HAVE_STRING_H
+#ifdef STDC_HEADERS
 # include <string.h>
-#endif
-
-#ifdef HAVE_STDLIB_H
 # include <stdlib.h>
 #endif
 
