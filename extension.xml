@@ -12,6 +12,9 @@
 		</maintainer>
 	</maintainers>
 	<license>PHP</license>
+	<deps>
+		<extension name="spl"/>
+	</deps>
 
 	<class name="TarArchive">
 		<function name="open">

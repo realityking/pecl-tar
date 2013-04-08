@@ -15,12 +15,15 @@
 #include "php_tar.h"
 
 #include <fcntl.h>
+#include "zend_exceptions.h"
 
 #if HAVE_TAR
 
 /* {{{ Class definitions */
 
 /* {{{ Class TarArchive */
+
+extern PHPAPI zend_class_entry *spl_ce_RuntimeException;
 
 static zend_class_entry * TarArchive_ce_ptr = NULL;
 
@@ -74,9 +77,44 @@ zend_object_value tar_create_handler(zend_class_entry *type TSRMLS_DC)
 	}
 /* }}} */
 
+/**
+ * Return codes:
+ * -1: File could not be opened
+ *  0: Uncompressed
+ *  1: gzip
+ *  2: bzip2
+ */
+int detect_tar_type(const char *pathname)
+{
+	FILE *fp;
+	char buffer[2];
+	size_t result;
+	char hex[10];
+
+	fp = fopen(pathname, "r");
+	if (fp == NULL) {
+		return -1;
+	}
+
+	result = fread(buffer, 1, 2, fp);
+	if (result != 2) {
+		return -1;
+	}
+
+	if ((buffer[0] == (char)0x1f) && (buffer[1] == (char)0x8b)) {
+		return 1;
+	}
+
+	if ((buffer[0] == 'B') && (buffer[1] == 'Z')) {
+		return 2;
+	}
+
+	return 0;
+}
+
 /* {{{ Methods */
 
-/* {{{ proto mixed open(string filename)
+/* {{{ proto void open(string filename)
    */
 PHP_METHOD(TarArchive, open)
 {
@@ -86,6 +124,7 @@ PHP_METHOD(TarArchive, open)
 	char resolved_path[MAXPATHLEN];
 	tar_object *ze_obj = NULL;
 	int err = 0;
+	int tar_type;
 	TAR *intern;
 	zval *this = getThis();
 
@@ -120,16 +159,25 @@ PHP_METHOD(TarArchive, open)
 		ze_obj->filename = NULL;
 	}
 
+	tar_type = detect_tar_type(filename);
+	if (tar_type == -1) {
+		zend_throw_exception_ex(spl_ce_RuntimeException, 0 TSRMLS_CC, "Could not open file '%s'", filename);
+	}
+	if (tar_type == 1) {
+		zend_throw_exception_ex(spl_ce_RuntimeException, 0 TSRMLS_CC, "The tar extension does not currently support gzip.");
+	}
+	if (tar_type == 2) {
+		zend_throw_exception_ex(spl_ce_RuntimeException, 0 TSRMLS_CC, "The tar extension does not currently support bzip2.");
+	}
+
 	err = tar_open(&intern, resolved_path, NULL, O_RDONLY, 0, 0);
 	if (!intern || err != 0) {
-		RETURN_LONG((long)err);
+		zend_throw_exception_ex(spl_ce_RuntimeException, 0 TSRMLS_CC, "Could not open file '%s'", filename);
 	}
 
 	ze_obj->filename = estrdup(resolved_path);
 	ze_obj->filename_len = filename_len;
 	ze_obj->tar = intern;
-
-	RETURN_TRUE;
 }
 /* }}} open */
 
@@ -176,7 +224,7 @@ PHP_METHOD(TarArchive, extractTo)
 }
 /* }}} extractTo */
 
-/* {{{ proto void statIndex(int index)
+/* {{{ proto array statIndex(int index)
    */
 PHP_METHOD(TarArchive, statIndex)
 {
@@ -241,15 +289,13 @@ PHP_METHOD(TarArchive, close)
 
 	err = tar_close(intern);
 	if (err != 0) {
-		RETURN_FALSE;
+		zend_throw_exception_ex(spl_ce_RuntimeException, 0 TSRMLS_CC, "There was an error closing the tar handle.");
 	}
 
 	efree(ze_obj->filename);
 	ze_obj->filename = NULL;
 	ze_obj->filename_len = 0;
 	ze_obj->tar = NULL;
-
-	RETURN_TRUE;
 }
 /* }}} close */
 
@@ -272,6 +318,15 @@ function_entry tar_functions[] = {
 };
 /* }}} */
 
+/* {{{ cross-extension dependencies */
+
+#if ZEND_EXTENSION_API_NO >= 220050617
+static zend_module_dep tar_deps[] = {
+	ZEND_MOD_REQUIRED("spl")
+	{NULL, NULL, NULL, 0}
+};
+#endif
+/* }}} */
 
 /* {{{ tar_module_entry
  */
