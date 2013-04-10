@@ -15,6 +15,7 @@
 #include "php_tar.h"
 
 #include <fcntl.h>
+#include "utilities.h"
 #include "zend_exceptions.h"
 
 #if HAVE_TAR
@@ -76,41 +77,6 @@ zend_object_value tar_create_handler(zend_class_entry *type TSRMLS_DC)
 		} \
 	}
 /* }}} */
-
-/**
- * Return codes:
- * -1: File could not be opened
- *  0: Uncompressed
- *  1: gzip
- *  2: bzip2
- */
-int detect_tar_type(const char *pathname)
-{
-	FILE *fp;
-	char buffer[2];
-	size_t result;
-	char hex[10];
-
-	fp = fopen(pathname, "r");
-	if (fp == NULL) {
-		return -1;
-	}
-
-	result = fread(buffer, 1, 2, fp);
-	if (result != 2) {
-		return -1;
-	}
-
-	if ((buffer[0] == (char)0x1f) && (buffer[1] == (char)0x8b)) {
-		return 1;
-	}
-
-	if ((buffer[0] == 'B') && (buffer[1] == 'Z')) {
-		return 2;
-	}
-
-	return 0;
-}
 
 /* {{{ Methods */
 

@@ -31,7 +31,7 @@ if test "$PHP_TAR" != "no"; then
   						lib/block.c lib/wrapper.c lib/decode.c
   						lib/append.c"
 
-  PHP_NEW_EXTENSION(tar, tar.c $PHP_TAR_SOURCES, $ext_shared)
+  PHP_NEW_EXTENSION(tar, tar.c utilities.c $PHP_TAR_SOURCES, $ext_shared)
 
 fi
 
