@@ -40,7 +40,7 @@ extern "C" {
 extern "C" {
 #endif
 
-/* {{{ ZIP_OPENBASEDIR_CHECKPATH(filename) */
+/* {{{ TAR_OPENBASEDIR_CHECKPATH(filename) */
 #if PHP_API_VERSION < 20100412
 # define TAR_OPENBASEDIR_CHECKPATH(filename) \
 	(PG(safe_mode) && (!php_checkuid(filename, NULL, CHECKUID_CHECK_FILE_AND_DIR))) || php_check_open_basedir(filename TSRMLS_CC)
@@ -61,8 +61,6 @@ extern zend_module_entry tar_module_entry;
 
 PHP_MINIT_FUNCTION(tar);
 PHP_MSHUTDOWN_FUNCTION(tar);
-PHP_RINIT_FUNCTION(tar);
-PHP_RSHUTDOWN_FUNCTION(tar);
 PHP_MINFO_FUNCTION(tar);
 
 #ifdef ZTS
